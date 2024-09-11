@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ThemeToggle from '../../utils/themeToggle';
+import { ChevronDoubleLeftIcon } from '@heroicons/react/24/solid';
 
 const Dashboard = () => {
   const [message, setMessage] = useState('');
   const [dietaryPreference, setDietaryPreference] = useState('All');
   const [ingredients, setIngredients] = useState('');
-  const [recipes, setRecipes] = useState([]); 
-  const [favorites, setFavorites] = useState([]); 
-  const [currentImageIndex, setCurrentImageIndex] = useState(0); 
+  const [recipes, setRecipes] = useState([]);
+  const [favorites, setFavorites] = useState([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const navigate = useNavigate();
 
   const images = [
@@ -26,9 +27,9 @@ const Dashboard = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 2000); 
+    }, 2000);
 
-    return () => clearInterval(interval); 
+    return () => clearInterval(interval);
   }, [images.length]);
 
 
@@ -52,7 +53,7 @@ const Dashboard = () => {
         const favoriteResponse = await axios.get('http://localhost:5000/recipes', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setFavorites(favoriteResponse.data); 
+        setFavorites(favoriteResponse.data);
       } catch (error) {
         console.error(error);
         localStorage.removeItem('token');
@@ -63,10 +64,21 @@ const Dashboard = () => {
     fetchDashboardData();
   }, [navigate]);
 
-  const handleGenerate = () => {
+  const handleGenerate = async() => {
     // You can add the logic here to generate recipes based on dietary preference and ingredients.
     console.log('Dietary Preference:', dietaryPreference);
     console.log('Ingredients:', ingredients);
+
+    // const user = { email: 'dhavalpathak2003@gmail.com' }; // Replace with actual user data if needed
+//     const recipe = { title: 'Test Recipe' }; // Replace with actual recipe data if needed
+//     const token = localStorage.getItem('token');
+//     // Sending user and recipe data to the /generate-recipe route
+//     const mailsend = await axios.post(
+//       'http://localhost:5000/generate-recipe',
+//       { user, recipe }, // Pass user and recipe data in the request body
+//       { headers: { Authorization: `Bearer ${token}` } }
+//     );
+//     console.log(mailsend);
   };
 
   const handleRemoveFavorite = async (recipeId) => {

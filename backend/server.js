@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const {sendRecipeEmail} = require('./mailer');
 const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
@@ -124,5 +125,24 @@ app.get('/dashboard', authenticateToken, async (req, res) => {
 
   res.json({ message: `Welcome to the dashboard, ${user.email}` });
 });
+
+
+app.post('/generate-recipe', authenticateToken, async (req, res) => {
+  try {
+    const { user, recipe } = req.body;
+
+    if (!user || !recipe) {
+      return res.status(400).json({ error: 'User or recipe information is missing' });
+    }
+
+    // Call the function to send an email
+    const result = await sendRecipeEmail(user, recipe);
+    res.status(200).json(result);    
+  } catch (error) {
+    console.error('Error in /generate-recipe route:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
