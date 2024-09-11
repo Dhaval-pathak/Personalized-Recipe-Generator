@@ -1,3 +1,4 @@
+// Login.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -15,16 +16,17 @@ const Login = () => {
       localStorage.setItem('token', response.data.token);
       navigate('/dashboard');
     } catch (err) {
-      setError('Invalid credentials');
+      setError('Login failed');
     }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = 'http://localhost:5000/auth/google';
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="max-w-md w-full bg-white shadow-md rounded-lg p-8">
-      <div className="bg-white dark:bg-gray-800 text-black dark:text-white">
-  <p>This text changes color based on the theme.</p>
-</div>
         <h2 className="text-2xl font-semibold mb-6 text-center">Login</h2>
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
         <form onSubmit={handleLogin}>
@@ -51,6 +53,13 @@ const Login = () => {
             Login
           </button>
         </form>
+        <p className="text-center mt-4">Or</p>
+        <button
+          onClick={handleGoogleLogin}
+          className="w-full p-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition mt-4"
+        >
+          Login with Google
+        </button>
         <p className="text-center mt-4">
           Don't have an account?{' '}
           <a href="/register" className="text-blue-500 hover:underline">

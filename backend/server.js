@@ -3,6 +3,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {sendRecipeEmail} = require('./mailer');
 const { PrismaClient } = require('@prisma/client');
+const passport = require('passport');
+const setupGoogleStrategy = require('./controllers/googleAuth'); // Google OAuth setup
 
 const prisma = new PrismaClient();
 const app = express();
@@ -32,6 +34,23 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Set up Google OAuth Strategy
+setupGoogleStrategy();  // This must be called before routes that use the "google" strategy
+
+// Google OAuth Routes
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }),
+  (req, res) => {
+    const token = jwt.sign({ id: req.user.id }, JWT_SECRET, { expiresIn: '30s' });
+    res.redirect(`/dashboard?token=${token}`);
+  }
+);
+
 // Register Route
 app.post('/register', async (req, res) => {
   const { email, password } = req.body;
@@ -53,7 +72,7 @@ app.post('/register', async (req, res) => {
     },
   });
 
-  const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '1h' });
+  const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '30s' });
 
   res.status(201).json({ token });
 });
@@ -75,7 +94,7 @@ app.post('/login', async (req, res) => {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
 
-  const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '1h' });
+  const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '30s' });
 
   res.json({ token });
 });

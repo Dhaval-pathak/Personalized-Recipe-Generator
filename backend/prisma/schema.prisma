@@ -9,11 +9,13 @@ datasource db {
 
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  password  String
-  createdAt DateTime  @default(now())
-  recipes   Recipe[]  // One-to-many relationship with Recipe
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  password      String?   // Optional for OAuth users
+  name          String?   // Store name from custom registration and OAuth
+  oauthProvider String?   // Indicate if the user registered via OAuth
+  createdAt     DateTime  @default(now())
+  recipes       Recipe[]  // One-to-many relationship with Recipe
 }
 
 model Recipe {
