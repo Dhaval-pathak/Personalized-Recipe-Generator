@@ -5,13 +5,17 @@ const {sendRecipeEmail} = require('./mailer');
 const { PrismaClient } = require('@prisma/client');
 const passport = require('passport');
 const setupGoogleStrategy = require('./controllers/googleAuth'); // Google OAuth setup
+const cors = require('cors');
 
 const prisma = new PrismaClient();
 const app = express();
-var cors = require('cors');
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000', // Replace with your frontend URL
+  credentials: true // If you're using cookies for sessions
+}));
+
 
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -34,6 +38,16 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+const session = require('express-session');
+
+// Add this before passport initialization
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your-secret-key',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Set secure to true if using HTTPS
+}));
+
 // Initialize Passport
 app.use(passport.initialize());
 app.use(passport.session());
@@ -47,7 +61,7 @@ app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'em
 app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }),
   (req, res) => {
     const token = jwt.sign({ id: req.user.id }, JWT_SECRET, { expiresIn: '30s' });
-    res.redirect(`/dashboard?token=${token}`);
+    res.json({ token }); 
   }
 );
 

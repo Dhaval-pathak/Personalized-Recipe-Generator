@@ -16,14 +16,15 @@ function setupGoogleStrategy() {
         let user = await prisma.user.findUnique({ where: { email: profile.emails[0].value } });
 
         if (!user) {
-          user = await prisma.user.create({
-            data: {
-              email: profile.emails[0].value,
-              name: profile.displayName,
-              oauthProvider: 'google',
-            },
-          });
-        }
+            user = await prisma.user.create({
+              data: {
+                email: profile.emails[0].value,
+                name: profile.displayName,
+                oauthProvider: "google",
+              },
+            });
+          }
+          
 
         return done(null, user);
       } catch (error) {

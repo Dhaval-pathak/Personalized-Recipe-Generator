@@ -20,9 +20,31 @@ const Login = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:5000/auth/google';
+  const handleGoogleLogin = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/auth/google/callback', {
+        method: 'GET',
+        credentials: 'include',  // Include cookies if needed
+      });
+  
+      if (!response.ok) {
+        throw new Error('Google login failed');
+      }
+  
+      const data = await response.json();
+      const { token } = data;
+      
+      // Store the token in localStorage
+      localStorage.setItem('token', token);
+      
+      // Navigate to dashboard
+      navigate('/dashboard');
+    } catch (err) {
+      setError('Google login failed');
+    }
   };
+  
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
