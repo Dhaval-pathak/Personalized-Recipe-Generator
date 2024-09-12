@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ThemeToggle from '../../utils/themeToggle';
-import { ChevronDoubleLeftIcon } from '@heroicons/react/24/solid';
+import {
+  fetchDashboardData,
+  fetchFavoriteRecipes,
+  removeFavoriteRecipe
+} from '../../services/api';
 
 const Dashboard = () => {
   const [message, setMessage] = useState('');
@@ -28,47 +31,35 @@ const Dashboard = () => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
     }, 2000);
-
     return () => clearInterval(interval);
   }, [images.length]);
 
-
-  // Fetch the dashboard data and user's favorite recipes
   useEffect(() => {
-    const fetchDashboardData = async () => {
+    const fetchData = async () => {
       const token = localStorage.getItem('token');
       if (!token) {
         navigate('/login');
         return;
       }
-
       try {
-        // Fetch the dashboard message
-        const response = await axios.get('http://localhost:5000/dashboard', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setMessage(response.data.message);
-
-        // Fetch the saved recipes (favorites)
-        const favoriteResponse = await axios.get('http://localhost:5000/recipes', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setFavorites(favoriteResponse.data);
+        const data = await fetchDashboardData(token);
+        setMessage(data.message);
+        const favoriteData = await fetchFavoriteRecipes(token);
+        setFavorites(favoriteData);
       } catch (error) {
         console.error(error);
         localStorage.removeItem('token');
         navigate('/login');
       }
     };
-
-    fetchDashboardData();
+    fetchData();
   }, [navigate]);
 
-  const handleGenerate = async() => {
+  const handleGenerate = async () => {
     // You can add the logic here to generate recipes based on dietary preference and ingredients.
     console.log('Dietary Preference:', dietaryPreference);
     console.log('Ingredients:', ingredients);
-
+    
     // const user = { email: 'dhavalpathak2003@gmail.com' }; // Replace with actual user data if needed
 //     const recipe = { title: 'Test Recipe' }; // Replace with actual recipe data if needed
 //     const token = localStorage.getItem('token');
@@ -84,11 +75,8 @@ const Dashboard = () => {
   const handleRemoveFavorite = async (recipeId) => {
     const token = localStorage.getItem('token');
     try {
-      await axios.delete(`http://localhost:5000/recipes/${recipeId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      // After successful removal, update the favorites list
-      setFavorites(favorites.filter(recipe => recipe.id !== recipeId));
+      await removeFavoriteRecipe(recipeId, token);
+      setFavorites(favorites.filter((recipe) => recipe.id !== recipeId));
     } catch (error) {
       console.error('Error removing favorite:', error);
     }

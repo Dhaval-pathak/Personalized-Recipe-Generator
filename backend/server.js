@@ -1,8 +1,9 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const {sendRecipeEmail} = require('./mailer');
+const {sendRecipeEmail} = require('./utils/mailer');
 const { PrismaClient } = require('@prisma/client');
+const authenticateToken = require('./middleware/middlewareAuth')
 
 const prisma = new PrismaClient();
 const app = express();
@@ -14,23 +15,6 @@ app.use(cors());
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Authentication middleware
-const authenticateToken = (req, res, next) => {
-  const token = req.headers['authorization']?.split(' ')[1]; // Get token from Authorization header
-
-  if (!token) {
-    return res.status(401).json({ error: 'Access denied' });
-  }
-
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) {
-      return res.status(403).json({ error: 'Invalid token' });
-    }
-
-    req.user = user;
-    next();
-  });
-};
 
 // Register Route
 app.post('/register', async (req, res) => {

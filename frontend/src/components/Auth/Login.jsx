@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { login } from '../../services/api';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -11,8 +11,8 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/login', { email, password });
-      localStorage.setItem('token', response.data.token);
+      const data = await login(email, password);
+      localStorage.setItem('token', data.token);
       navigate('/dashboard');
     } catch (err) {
       setError('Invalid credentials');
@@ -22,9 +22,6 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="max-w-md w-full bg-white shadow-md rounded-lg p-8">
-      <div className="bg-white dark:bg-gray-800 text-black dark:text-white">
-  <p>This text changes color based on the theme.</p>
-</div>
         <h2 className="text-2xl font-semibold mb-6 text-center">Login</h2>
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
         <form onSubmit={handleLogin}>
