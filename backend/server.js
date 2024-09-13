@@ -1,9 +1,10 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const {sendRecipeEmail} = require('./utils/mailer');
+const { sendRecipeEmail, sendWelcomeEmail } = require('./utils/mailer');
 const { PrismaClient } = require('@prisma/client');
-const authenticateToken = require('./middleware/middlewareAuth')
+const authenticateToken = require('./middleware/middlewareAuth');
+const { fetchOpenAICompletions } = require('./utils/openAi');
 
 const prisma = new PrismaClient();
 const app = express();
@@ -14,7 +15,6 @@ app.use(cors());
 
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET;
-
 
 // Register Route
 app.post('/register', async (req, res) => {
@@ -38,6 +38,12 @@ app.post('/register', async (req, res) => {
   });
 
   const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '1h' });
+
+  try {
+    await sendWelcomeEmail(user);  
+  } catch (error) {
+    console.error('Error sending welcome email:', error);
+  }
 
   res.status(201).json({ token });
 });
@@ -95,8 +101,6 @@ app.get('/recipes', authenticateToken, async (req, res) => {
   }
 });
 
-
-
 // Dashboard Route
 app.get('/dashboard', authenticateToken, async (req, res) => {
   const user = await prisma.user.findUnique({
@@ -110,23 +114,58 @@ app.get('/dashboard', authenticateToken, async (req, res) => {
   res.json({ message: `Welcome to the dashboard, ${user.email}` });
 });
 
-
+// Generate Recipe Route
 app.post('/generate-recipe', authenticateToken, async (req, res) => {
   try {
-    const { user, recipe } = req.body;
+    const { user, dietaryPreference, ingredients } = req.body;
 
-    if (!user || !recipe) {
-      return res.status(400).json({ error: 'User or recipe information is missing' });
+    if (!dietaryPreference || !ingredients) {
+      return res.status(400).json({ error: 'Missing dietary preferences or ingredients' });
     }
 
+    const prompt = [
+      "Generate a recipe based on the following details:",
+      `[Dietary Preference: ${dietaryPreference}]`,
+      `[Ingredients: ${ingredients}]`,
+      "Provide a detailed recipe in JSON format with the following structure:",
+      "{",
+      "  \"title\": \"Recipe Title\",",
+      "  \"summary\": \"Short summary of the recipe\",", 
+      "  \"ingredients\": [\"ingredient 1\", \"ingredient 2\", ...],",
+      "  \"steps\": [\"Instruction 1\", \"Instruction 2\", ...],", // Avoids "Step X" prefix
+      "  \"prepTime\": \"X minutes\",",
+      "  \"cookTime\": \"Y minutes\"",
+      "}",
+      "Ensure that the steps do not include 'Step X' numbering, but are simple, clear instructions."
+    ];
+    
+    
+
+    const messages = [
+      {
+        role: "system",
+        content: prompt.join(" "),
+      },
+    ];
+
+    // Fetch the recipe from OpenAI
+    const recipe = await fetchOpenAICompletions(messages);
+    console.log("server---------------------------------------------")
+    console.log(recipe)
     // Call the function to send an email
-    const result = await sendRecipeEmail(user, recipe);
-    res.status(200).json(result);    
+    try {
+      await sendRecipeEmail(user, recipe);
+    } catch (emailError) {
+      console.error('Error sending recipe email:', emailError);
+    }
+
+    // Send the final response
+    res.status(200).json({ recipe });
+    
   } catch (error) {
     console.error('Error in /generate-recipe route:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

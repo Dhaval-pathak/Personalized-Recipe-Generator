@@ -4,17 +4,21 @@ import ThemeToggle from '../../utils/themeToggle';
 import {
   fetchDashboardData,
   fetchFavoriteRecipes,
-  removeFavoriteRecipe
+  removeFavoriteRecipe,
+  generateRecipe
 } from '../../services/api';
+import RecipeDisplay from './DisplayRecipe';
+import Loader from './Loader';
 
 const Dashboard = () => {
   const [message, setMessage] = useState('');
   const [dietaryPreference, setDietaryPreference] = useState('All');
   const [ingredients, setIngredients] = useState('');
-  const [recipes, setRecipes] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [recipe, setRecipe] = useState(null);
 
   const images = [
     '/assets/images/1.png',
@@ -55,21 +59,21 @@ const Dashboard = () => {
     fetchData();
   }, [navigate]);
 
-  const handleGenerate = async () => {
-    // You can add the logic here to generate recipes based on dietary preference and ingredients.
-    console.log('Dietary Preference:', dietaryPreference);
-    console.log('Ingredients:', ingredients);
-    
-    // const user = { email: 'dhavalpathak2003@gmail.com' }; // Replace with actual user data if needed
-//     const recipe = { title: 'Test Recipe' }; // Replace with actual recipe data if needed
-//     const token = localStorage.getItem('token');
-//     // Sending user and recipe data to the /generate-recipe route
-//     const mailsend = await axios.post(
-//       'http://localhost:5000/generate-recipe',
-//       { user, recipe }, // Pass user and recipe data in the request body
-//       { headers: { Authorization: `Bearer ${token}` } }
-//     );
-//     console.log(mailsend);
+  const handleGenerateRecipe = async () => {
+    setLoading(true); // Show loader
+    const token = localStorage.getItem('token');
+
+    const user = { email: 'dhavalpathak2003@gmail.com' }; // Replace with actual user data if needed
+    const recipe = { title: 'Test Recipe' }; // Replace with actual recipe data if needed
+    try {
+      const response = await generateRecipe(user, dietaryPreference, ingredients, token);
+      setRecipe(response.data.recipe); // Set the recipe data
+      console.log(response.data.recipe);
+    } catch (error) {
+      console.error('Error generating recipe:', error);
+    } finally {
+      setLoading(false); // Hide loader
+    }
   };
 
   const handleRemoveFavorite = async (recipeId) => {
@@ -132,9 +136,8 @@ const Dashboard = () => {
             Generate custom recipes based on what you have in your kitchen. <br />Save your favorites, explore new ideas, and enjoy cooking!
           </p>
 
-          {/* Input Section: Dietary Preferences and Ingredients */}
+          {/* Form to Input Preferences */}
           <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
-            {/* Dietary Preferences Dropdown */}
             <select
               value={dietaryPreference}
               onChange={(e) => setDietaryPreference(e.target.value)}
@@ -147,7 +150,6 @@ const Dashboard = () => {
               <option value="Keto">Keto</option>
             </select>
 
-            {/* Ingredients Input */}
             <input
               type="text"
               value={ingredients}
@@ -156,14 +158,23 @@ const Dashboard = () => {
               placeholder="Enter available ingredients..."
             />
 
-            {/* Generate Button */}
             <button
-              onClick={handleGenerate}
+              onClick={handleGenerateRecipe}
               className="bg-green-600 dark:bg-green-800 text-white px-6 py-2 rounded-md hover:bg-green-500 dark:hover:bg-green-700"
             >
               Generate Recipe
             </button>
           </div>
+
+            {/* Show Loader */}
+            {loading && (
+            <div className="text-center mt-6">
+              <Loader />
+            </div>
+          )}
+
+          {/* Recipe Display */}
+          {recipe && (<RecipeDisplay recipe={recipe} />)}
 
           {/* Stats Section */}
           <section className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-8 w-full max-w-4xl">

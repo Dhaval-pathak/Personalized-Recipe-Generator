@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Dashboard from './components/Dashboard/Dashboard';
-import ThemeToggle from './utils/themeToggle';
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');

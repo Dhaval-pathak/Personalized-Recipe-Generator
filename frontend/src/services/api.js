@@ -32,5 +32,15 @@ const removeFavoriteRecipe = async (recipeId, token) => {
     });
 };
 
+const generateRecipe = async (user, dietaryPreference, ingredients, token ) => {
+    const response = await axios.post(
+        `${API_BASE_URL}/generate-recipe`,
+        { user, dietaryPreference, ingredients}, // Pass user and recipe data in the request body
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      return response;
+};
 
-export { login, register, fetchDashboardData, fetchFavoriteRecipes, removeFavoriteRecipe }
+
+
+export { login, register, fetchDashboardData, fetchFavoriteRecipes, removeFavoriteRecipe, generateRecipe }
