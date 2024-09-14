@@ -12,18 +12,40 @@ const register = async (email, password) => {
     return response.data;
 };
 
-const fetchDashboardData = async (token) => {
+const getDashboardData = async (token) => {
     const response = await axios.get(`${API_BASE_URL}/dashboard`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
 };
 
-const fetchFavoriteRecipes = async (token) => {
+const getUserRecipes = (token) => {
+    return axios.get(`${API_BASE_URL}/recipes`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+const deleteUserRecipe = async (recipeId, token) => {
+    await axios.delete(`${API_BASE_URL}/recipes/${recipeId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+};
+
+const getFavoriteRecipes = async (token) => {
     const response = await axios.get(`${API_BASE_URL}/recipes`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
+};
+
+const toggleFavouriteRecipe = (recipeId, token) => {
+    return axios.post(`${API_BASE_URL}/recipes/${recipeId}/toggle-favourite`, {}, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
 };
 
 const removeFavoriteRecipe = async (recipeId, token) => {
@@ -32,15 +54,15 @@ const removeFavoriteRecipe = async (recipeId, token) => {
     });
 };
 
-const generateRecipe = async (user, dietaryPreference, ingredients, token ) => {
+const generateRecipe = async (user, dietaryPreference, ingredients, token) => {
     const response = await axios.post(
         `${API_BASE_URL}/generate-recipe`,
-        { user, dietaryPreference, ingredients}, // Pass user and recipe data in the request body
+        { user, dietaryPreference, ingredients },
         { headers: { Authorization: `Bearer ${token}` } }
-      );
-      return response;
+    );
+    return response;
 };
 
 
 
-export { login, register, fetchDashboardData, fetchFavoriteRecipes, removeFavoriteRecipe, generateRecipe }
+export { login, register, getDashboardData, getUserRecipes, deleteUserRecipe, getFavoriteRecipes, toggleFavouriteRecipe, removeFavoriteRecipe, generateRecipe }

@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Dashboard from './components/Dashboard/Dashboard';
+import { FavouriteRecipe } from './components/FavouriteSection/favouriteRecipe';
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -23,6 +24,7 @@ function App() {
             </PrivateRoute>
           }
         />
+        <Route path="/favourites" element={<FavouriteRecipe />} />
       </Routes>
     </Router>
   );

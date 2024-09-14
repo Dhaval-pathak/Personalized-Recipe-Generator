@@ -17,10 +17,16 @@ model User {
 }
 
 model Recipe {
-  id        Int       @id @default(autoincrement())
-  title     String
-  ingredients String
-  instructions String
-  userId    Int
-  user      User      @relation(fields: [userId], references: [id]) // Many-to-one relationship with User
+  id              Int       @id @default(autoincrement())
+  title           String
+  dietaryPreference String   // Stores dietary preference (e.g., Vegan, Keto, etc.)
+  summary         String
+  ingredients     String     // Ingredients stored as a JSON string or as text
+  instructions    String     // Instructions stored as a JSON string or as text
+  prepTime        String     // Preparation time
+  cookTime        String     // Cooking time
+  isFavourite     Boolean    @default(false) // New field to mark as favorite
+  createdAt       DateTime   @default(now()) // Timestamp for when the recipe is generated
+  userId          Int        // Foreign key to the user
+  user            User       @relation(fields: [userId], references: [id])
 }

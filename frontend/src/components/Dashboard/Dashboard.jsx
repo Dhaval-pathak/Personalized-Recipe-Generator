@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ThemeToggle from '../../utils/themeToggle';
 import {
-  fetchDashboardData,
+  getDashboardData,
   generateRecipe
 } from '../../services/api';
 import RecipeDisplay from './DisplayRecipe';
-import Loader from './Loader';
-import { FavouriteRecipe } from './favouriteRecipe';
+import Loader from '../../utils/Loader';
+import GeneratedRecipeList from '../../utils/GeneratedRecipeList';
+import Footer from '../../utils/footer';
+import Header from '../../utils/header';
 
 const Dashboard = () => {
   const [message, setMessage] = useState('');
@@ -47,7 +48,7 @@ const Dashboard = () => {
         return;
       }
       try {
-        const data = await fetchDashboardData(token);
+        const data = await getDashboardData(token);
         setMessage(data.message);
         setUserEmail(data.email);
       } catch (error) {
@@ -80,30 +81,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition duration-500">
       <div className="flex flex-col">
         {/* Sticky Navbar */}
-        <header className="bg-gradient-to-r from-lightGradientStart to-lightGradientEnd dark:from-darkGradientStart dark:to-darkGradientEnd shadow-sm sticky top-0 z-50">
-          <div className="container mx-auto py-3 px-6 flex justify-between items-center">
-            <div className="flex items-center space-x-10">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">MealMaker</h1>
-              <nav className="space-x-8">
-                <a href="#about" className="navBackgroundLight hover:text-white dark:text-gray-300 ">About</a>
-                <a href="https://github.com/yourrepo" target="_blank" className="navBackgroundLight hover:text-white dark:text-gray-300">GitHub</a>
-                <a href="#profile" className="navBackgroundLight hover:text-white dark:text-gray-300">Profile</a>
-              </nav>
-            </div>
-            <div className="flex gap-4">
-              <ThemeToggle />
-              <button
-                className="text-white font-semibold px-4 py-2 rounded-md transition duration-300 hover:bg-red-500 hover:text-white dark:border-red-400  dark:text-red-400 dark:hover:text-white"
-                onClick={() => {
-                  localStorage.removeItem('token');
-                  navigate('/login');
-                }}
-              >
-                Log out
-              </button>
-            </div>
-          </div>
-        </header>
+        <Header />
 
         {/* Main Section */}
         <main className="flex-1 container mx-auto px-6 py-10 flex flex-col items-center text-center">
@@ -181,17 +159,11 @@ const Dashboard = () => {
               <p className="text-gray-700 dark:text-gray-300 mt-2">Vegan Recipes</p>
             </div>
           </section>
-
-
-          <FavouriteRecipe />
+          <GeneratedRecipeList />
         </main>
 
         {/* Footer */}
-        <footer className="bg-gray-800 text-gray-400 py-6">
-          <div className="container mx-auto text-center">
-            <p>&copy; 2024 MealMaker. All Rights Reserved.</p>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </div>
   );

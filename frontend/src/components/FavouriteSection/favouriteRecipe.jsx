@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { fetchFavoriteRecipes, removeFavoriteRecipe } from '../../services/api';
+import { getFavoriteRecipes, removeFavoriteRecipe } from '../../services/api';
+import Header from '../../utils/header';
 
 const FavouriteRecipe = () => {
     const [favorites, setFavorites] = useState([]);
@@ -8,7 +9,7 @@ const FavouriteRecipe = () => {
         const fetchFavorites = async () => {
             const token = localStorage.getItem('token');
             try {
-                const favoriteData = await fetchFavoriteRecipes(token);
+                const favoriteData = await getFavoriteRecipes(token);
                 setFavorites(favoriteData);
             } catch (error) {
                 console.error('Error fetching favorite recipes:', error);
@@ -29,6 +30,7 @@ const FavouriteRecipe = () => {
 
     return (
         <section className="mt-16 w-full max-w-4xl">
+            <Header />
             <h2 className="text-3xl font-bold dark:text-gray-200 mb-6">Your Favorite Recipes</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {favorites.length > 0 ? (

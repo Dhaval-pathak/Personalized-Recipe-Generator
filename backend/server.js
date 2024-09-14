@@ -70,24 +70,6 @@ app.post('/login', async (req, res) => {
   res.json({ token });
 });
 
-// Save Recipe Route
-app.post('/save-recipe', authenticateToken, async (req, res) => {
-  const { title, ingredients, instructions } = req.body;
-
-  try {
-    const recipe = await prisma.recipe.create({
-      data: {
-        title,
-        ingredients,
-        instructions,
-        userId: req.user.id,
-      },
-    });
-    res.status(201).json(recipe);
-  } catch (error) {
-    res.status(500).json({ error: 'Error saving recipe' });
-  }
-});
 
 // Get User's Recipes Route
 app.get('/recipes', authenticateToken, async (req, res) => {
@@ -100,6 +82,61 @@ app.get('/recipes', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Error fetching recipes' });
   }
 });
+
+// Delete a recipe from favorites
+app.delete('/recipes/:recipeId', authenticateToken, async (req, res) => {
+  const recipeId = parseInt(req.params.recipeId);
+
+  try {
+    const recipe = await prisma.recipe.findUnique({
+      where: {
+        id: recipeId,
+      },
+    });
+
+    if (!recipe) {
+      return res.status(404).json({ error: 'Recipe not found' });
+    }
+
+    if (recipe.userId !== req.user.id) {
+      return res.status(403).json({ error: 'You are not allowed to delete this recipe' });
+    }
+
+    await prisma.recipe.delete({
+      where: {
+        id: recipeId,
+      },
+    });
+
+    res.status(200).json({ message: 'Recipe removed from favorites' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error removing the recipe' });
+  }
+});
+
+app.post('/recipes/:recipeId/toggle-favourite', authenticateToken, async (req, res) => {
+  const recipeId = parseInt(req.params.recipeId);
+
+  try {
+    const recipe = await prisma.recipe.findUnique({
+      where: { id: recipeId },
+    });
+
+    if (!recipe || recipe.userId !== req.user.id) {
+      return res.status(403).json({ error: 'Unauthorized action' });
+    }
+
+    const updatedRecipe = await prisma.recipe.update({
+      where: { id: recipeId },
+      data: { isFavourite: !recipe.isFavourite },
+    });
+
+    res.status(200).json(updatedRecipe);
+  } catch (error) {
+    res.status(500).json({ error: 'Error toggling favourite' });
+  }
+});
+
 
 // Dashboard Route
 app.get('/dashboard', authenticateToken, async (req, res) => {
@@ -181,10 +218,24 @@ app.post('/generate-recipe', authenticateToken, async (req, res) => {
       prepTime: '15 minutes',
       cookTime: '30 minutes'
     };
+    // const recipe = await fetchOpenAICompletions(messages);
     console.log("server---------------------------------------------")
     console.log(recipe)
-    // Call the function to send an email
+    // Call the function to send an email and saving the recipe
     try {
+      await prisma.recipe.create({
+        data: {
+          title: recipe.title,
+          ingredients: JSON.stringify(recipe.ingredients),
+          instructions: JSON.stringify(recipe.steps),
+          userId: req.user.id,
+          prepTime: recipe.prepTime,
+          cookTime: recipe.cookTime,
+          dietaryPreference: dietaryPreference,
+          summary:recipe.summary,
+          isFavourite: false
+        },
+      });
       await sendRecipeEmail(user, recipe);
     } catch (emailError) {
       console.error('Error sending recipe email:', emailError);
