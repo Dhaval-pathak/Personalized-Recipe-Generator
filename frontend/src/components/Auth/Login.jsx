@@ -20,9 +20,16 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="max-w-md w-full bg-white shadow-md rounded-lg p-8">
-        <h2 className="text-2xl font-semibold mb-6 text-center">Login</h2>
+    <div
+      className="min-h-screen flex items-center justify-center bg-cover bg-center"
+      style={{
+        backgroundImage: `url('/assets/background/login.png')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
+      <div className="max-w-md w-full bg-white/90 shadow-lg rounded-2xl p-10 backdrop-blur-lg">
+        <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">Login</h2>
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
         <form onSubmit={handleLogin}>
           <input
@@ -30,7 +37,7 @@ const Login = () => {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 mb-4 border border-gray-300 rounded-lg"
+            className="w-full p-4 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition"
             required
           />
           <input
@@ -38,19 +45,19 @@ const Login = () => {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 mb-4 border border-gray-300 rounded-lg"
+            className="w-full p-4 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition"
             required
           />
           <button
             type="submit"
-            className="w-full p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+            className="w-full py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-all shadow-md hover:shadow-xl"
           >
             Login
           </button>
         </form>
         <p className="text-center mt-4">
           Don't have an account?{' '}
-          <a href="/register" className="text-blue-500 hover:underline">
+          <a href="/register" className="text-green-500 hover:underline">
             Register
           </a>
         </p>

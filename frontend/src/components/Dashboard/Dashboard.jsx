@@ -3,22 +3,21 @@ import { useNavigate } from 'react-router-dom';
 import ThemeToggle from '../../utils/themeToggle';
 import {
   fetchDashboardData,
-  fetchFavoriteRecipes,
-  removeFavoriteRecipe,
   generateRecipe
 } from '../../services/api';
 import RecipeDisplay from './DisplayRecipe';
 import Loader from './Loader';
+import { FavouriteRecipe } from './favouriteRecipe';
 
 const Dashboard = () => {
   const [message, setMessage] = useState('');
   const [dietaryPreference, setDietaryPreference] = useState('All');
   const [ingredients, setIngredients] = useState('');
-  const [favorites, setFavorites] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState(null);
+  const [userEmail, setUserEmail] = useState('');
 
   const images = [
     '/assets/images/1.png',
@@ -29,12 +28,14 @@ const Dashboard = () => {
     '/assets/images/6.png',
     '/assets/images/7.png',
     '/assets/images/8.png',
+    '/assets/images/9.png',
+    '/assets/images/10.png',
   ];
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 2000);
+    }, 2500);
     return () => clearInterval(interval);
   }, [images.length]);
 
@@ -48,8 +49,7 @@ const Dashboard = () => {
       try {
         const data = await fetchDashboardData(token);
         setMessage(data.message);
-        const favoriteData = await fetchFavoriteRecipes(token);
-        setFavorites(favoriteData);
+        setUserEmail(data.email);
       } catch (error) {
         console.error(error);
         localStorage.removeItem('token');
@@ -62,29 +62,19 @@ const Dashboard = () => {
   const handleGenerateRecipe = async () => {
     setLoading(true); // Show loader
     const token = localStorage.getItem('token');
+    const user = { email: userEmail };
 
-    const user = { email: 'dhavalpathak2003@gmail.com' }; // Replace with actual user data if needed
-    const recipe = { title: 'Test Recipe' }; // Replace with actual recipe data if needed
     try {
       const response = await generateRecipe(user, dietaryPreference, ingredients, token);
-      setRecipe(response.data.recipe); // Set the recipe data
+      setRecipe(response.data.recipe);
       console.log(response.data.recipe);
     } catch (error) {
       console.error('Error generating recipe:', error);
     } finally {
-      setLoading(false); // Hide loader
+      setLoading(false);
     }
   };
 
-  const handleRemoveFavorite = async (recipeId) => {
-    const token = localStorage.getItem('token');
-    try {
-      await removeFavoriteRecipe(recipeId, token);
-      setFavorites(favorites.filter((recipe) => recipe.id !== recipeId));
-    } catch (error) {
-      console.error('Error removing favorite:', error);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition duration-500">
@@ -93,7 +83,7 @@ const Dashboard = () => {
         <header className="bg-gradient-to-r from-lightGradientStart to-lightGradientEnd dark:from-darkGradientStart dark:to-darkGradientEnd shadow-sm sticky top-0 z-50">
           <div className="container mx-auto py-3 px-6 flex justify-between items-center">
             <div className="flex items-center space-x-10">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">RecipeApp</h1>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">MealMaker</h1>
               <nav className="space-x-8">
                 <a href="#about" className="navBackgroundLight hover:text-white dark:text-gray-300 ">About</a>
                 <a href="https://github.com/yourrepo" target="_blank" className="navBackgroundLight hover:text-white dark:text-gray-300">GitHub</a>
@@ -123,7 +113,7 @@ const Dashboard = () => {
             <img
               src={images[currentImageIndex]}
               alt={`Carousel Image ${currentImageIndex}`}
-              className="h-20 w-50 transition-opacity duration-300"
+              className="h-25 w-64 transition-opacity duration-300 object-contain"
               style={{ backgroundColor: 'transparent' }}
             />
           </div>
@@ -166,8 +156,8 @@ const Dashboard = () => {
             </button>
           </div>
 
-            {/* Show Loader */}
-            {loading && (
+          {/* Show Loader */}
+          {loading && (
             <div className="text-center mt-6">
               <Loader />
             </div>
@@ -192,38 +182,14 @@ const Dashboard = () => {
             </div>
           </section>
 
-          {/* Favorite Recipes Section */}
-          <section className="mt-16 w-full max-w-4xl">
-            <h2 className="text-3xl font-bold dark:text-gray-200 mb-6">Your Favorite Recipes</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {/* Render the user's favorite recipes */}
-              {favorites.length > 0 ? (
-                favorites.map((recipe) => (
-                  <div key={recipe.id} className="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
-                    <img src="recipe.jpg" alt={recipe.title} className="w-full h-40 object-cover" />
-                    <div className="p-4">
-                      <h3 className="font-bold text-xl dark:text-gray-200">{recipe.title}</h3>
-                      <p className="text-gray-600 dark:text-gray-400 mt-2">{recipe.ingredients}</p>
-                      <button
-                        className="text-green-600 dark:text-green-400 mt-4"
-                        onClick={() => handleRemoveFavorite(recipe.id)}
-                      >
-                        Remove from Favorites
-                      </button>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="dark:text-gray-400">No favorite recipes saved yet.</p>
-              )}
-            </div>
-          </section>
+
+          <FavouriteRecipe />
         </main>
 
         {/* Footer */}
         <footer className="bg-gray-800 text-gray-400 py-6">
           <div className="container mx-auto text-center">
-            <p>&copy; 2024 RecipeApp. All Rights Reserved.</p>
+            <p>&copy; 2024 MealMaker. All Rights Reserved.</p>
           </div>
         </footer>
       </div>
