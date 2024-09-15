@@ -1,70 +1,74 @@
-# Getting Started with Create React App
+# Frontend for MealMaker - Personalized Recipe Generator
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
 
-## Available Scripts
+This frontend is built using **React.js** and **Tailwind CSS**. It allows users to register, log in, generate personalized recipes, and manage their saved recipes through a protected dashboard. The app also includes dark mode support and notifications for newly generated recipes.
 
-In the project directory, you can run:
+### Key Features:
+- User registration and login with **JWT token storage** in `localStorage`
+- **Protected dashboard** displaying saved recipes for authenticated users
+- **Personalized recipe generation** using dietary preferences
+- **Dark mode** functionality for a customized user experience
+- **Notifications** when new recipes are generated
 
-### `npm start`
+## Setup and Installation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Prerequisites
+- **Node.js** installed
+- **React.js** for building the UI
+- **Tailwind CSS** for styling
+- **Axios** for API calls
+- **React Router DOM** for routing
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Steps
 
-### `npm test`
+1. **Clone the repository** and navigate to the frontend directory:
+    ```bash
+    git clone https://github.com/yourusername/Personalized-Recipe-Generator
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    cd Personalized-Recipe-Generator/frontend
+    ```
 
-### `npm run build`
+2. **Install required dependencies**:
+    ```bash
+    npm install
+    ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+3. **Configure environment variables** in `.env`:
+    ```bash
+    REACT_APP_API_URL=http://localhost:5000
+    ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+    - **REACT_APP_API_URL**: This is the base URL for the backend API. Ensure it points to where the backend is running, either locally or on a server.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+4. **Start the frontend development server**:
+    ```bash
+    npm start
+    ```
 
-### `npm run eject`
+The frontend will run at `http://localhost:3000`.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Docker Setup
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+You can run the frontend inside a Docker container for easier deployment.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Docker Installation Instructions
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+1. **Install Docker** on your machine: You can follow the instructions for your operating system [here](https://docs.docker.com/get-docker/).
 
-## Learn More
+2. **Build the Docker image** for the frontend:
+    ```bash
+    docker build -t mealmaker-frontend .
+    ```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+3. **Run the container**:
+    ```bash
+    docker run -p 3000:3000 mealmaker-frontend
+    ```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+4. **Check the logs** to ensure the frontend is running:
+    ```bash
+    docker logs <container_id>
+    ```
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+5. **Access the frontend** at `http://localhost:3000`.
