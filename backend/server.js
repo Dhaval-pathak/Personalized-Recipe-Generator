@@ -114,6 +114,7 @@ app.delete('/recipes/:recipeId', authenticateToken, async (req, res) => {
   }
 });
 
+// Adding/removing a recipe from favorites
 app.post('/recipes/:recipeId/toggle-favourite', authenticateToken, async (req, res) => {
   const recipeId = parseInt(req.params.recipeId);
 
@@ -195,7 +196,6 @@ app.post('/generate-recipe', authenticateToken, async (req, res) => {
     ];
     
     
-
     const messages = [
       {
         role: "system",
@@ -204,37 +204,10 @@ app.post('/generate-recipe', authenticateToken, async (req, res) => {
     ];
 
     // Fetch the recipe from OpenAI
-    const recipe = {
-      title: 'Hearty Tomato and Potato Soup',
-      summary: 'A comforting, delicious and nutritious soup made with flavorful tomatoes and hearty potatoes.',
-      ingredients: [
-        '4 large tomatoes',
-        '2 large potatoes',
-        '1 medium onion',
-        '2 cloves of garlic',
-        '1 tablespoon of olive oil',
-        '4 cups of vegetable broth',
-        'Salt and pepper to taste',
-        'Fresh herbs for garnish (optional)'
-      ],
-      steps: [
-        'Wash all vegetables thoroughly.',
-        'Dice the tomatoes, potatoes, and onion. Mince the garlic.',
-        'In a large pot, heat the olive oil over medium heat.',
-        'Add the onion and garlic to the pot and sauté until the onion is translucent.',
-        'Add the diced tomatoes to the pot, stir, and cook for about 5 minutes or until the tomatoes start to break down.',
-        'Add the diced potatoes to the pot and stir to combine with the other ingredients.',
-        'Pour the vegetable broth into the pot. Increase the heat to bring the mixture to a boil.',
-        'Once boiling, reduce the heat to low, cover the pot, and let it simmer for about 20 minutes or until the potatoes are tender.',
-        'Season the soup with salt and pepper to taste. Allow the soup to cook for another 2-3 minutes.',
-        'Serve the soup hot, garnished with fresh herbs if desired.'
-      ],
-      prepTime: '15 minutes',
-      cookTime: '30 minutes'
-    };
-    // const recipe = await fetchOpenAICompletions(messages);
+    const recipe = await fetchOpenAICompletions(messages);
     console.log("server---------------------------------------------")
     console.log(recipe)
+    
     // Call the function to send an email and saving the recipe
     try {
       await prisma.recipe.create({

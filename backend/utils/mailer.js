@@ -117,8 +117,6 @@ async function sendWelcomeEmail(user) {
 }
 
 
-
-// Export the function
 module.exports = {
   sendRecipeEmail, sendWelcomeEmail
 };
