@@ -37,7 +37,7 @@ app.post('/register', async (req, res) => {
     },
   });
 
-  const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '1h' });
+  const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '2h' });
 
   try {
     await sendWelcomeEmail(user);  
@@ -65,7 +65,7 @@ app.post('/login', async (req, res) => {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
 
-  const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '1h' });
+  const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '2h' });
 
   res.json({ token });
 });
@@ -137,6 +137,20 @@ app.post('/recipes/:recipeId/toggle-favourite', authenticateToken, async (req, r
   }
 });
 
+// get favourite recipe
+app.get('/get-favourite-recipes', authenticateToken, async (req, res) => {  
+  try {
+      const favoriteRecipes = await prisma.recipe.findMany({
+          where: {
+              userId: req.user.id,
+              isFavourite: true,
+          },
+      });
+      res.json(favoriteRecipes);
+  } catch (error) {
+      res.status(500).json({ error: 'Error fetching favorite recipes' });
+  }
+});
 
 // Dashboard Route
 app.get('/dashboard', authenticateToken, async (req, res) => {

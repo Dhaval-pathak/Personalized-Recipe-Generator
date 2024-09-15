@@ -35,7 +35,7 @@ const deleteUserRecipe = async (recipeId, token) => {
 };
 
 const getFavoriteRecipes = async (token) => {
-    const response = await axios.get(`${API_BASE_URL}/recipes`, {
+    const response = await axios.get(`${API_BASE_URL}/get-favourite-recipes`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -46,12 +46,6 @@ const toggleFavouriteRecipe = (recipeId, token) => {
         headers: {
             Authorization: `Bearer ${token}`,
         },
-    });
-};
-
-const removeFavoriteRecipe = async (recipeId, token) => {
-    await axios.delete(`${API_BASE_URL}/recipes/${recipeId}`, {
-        headers: { Authorization: `Bearer ${token}` },
     });
 };
 
@@ -66,4 +60,4 @@ const generateRecipe = async (user, dietaryPreference, ingredients, token) => {
 
 
 
-export { login, register, getDashboardData, getUserRecipes, deleteUserRecipe, getFavoriteRecipes, toggleFavouriteRecipe, removeFavoriteRecipe, generateRecipe }
+export { login, register, getDashboardData, getUserRecipes, deleteUserRecipe, getFavoriteRecipes, toggleFavouriteRecipe, generateRecipe }

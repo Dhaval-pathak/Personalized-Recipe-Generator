@@ -1,32 +1,34 @@
 import React, { useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import ThemeToggle from './themeToggle';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Header = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem('token'); 
-    navigate('/login'); 
+    localStorage.removeItem('token');
+    navigate('/login');
   };
 
   const handleViewFavourites = () => {
-    navigate('/favourites'); 
+    navigate('/favourites');
   };
 
   return (
     <header className="bg-gradient-to-r from-lightGradientStart to-lightGradientEnd dark:from-darkGradientStart dark:to-darkGradientEnd shadow-sm sticky top-0 z-50">
       <div className="container mx-auto py-3 px-6 flex justify-between items-center">
         <div className="flex items-center space-x-10">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">MealMaker</h1>
+          <Link to="/dashboard">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 cursor-pointer">MealMaker</h1>
+          </Link>
           <nav className="space-x-8">
             <a href="#about" className="navBackgroundLight hover:text-white dark:text-gray-300">
               About
             </a>
             <a
-              href="https://github.com/yourrepo"
+              href="https://github.com/Dhaval-pathak/Personalized-Recipe-Generator"
               target="_blank"
               rel="noopener noreferrer"
               className="navBackgroundLight hover:text-white dark:text-gray-300"
