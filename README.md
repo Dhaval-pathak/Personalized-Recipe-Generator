@@ -9,7 +9,8 @@
 - **User Registration and Login**: Secure user authentication using JWT.
 - **JWT-Based Authentication**: Users can log in, stay authenticated with session persistence, and access protected routes.
 - **Recipe Generation**: AI-powered recipe generation based on user preferences and ingredients.
-- **Recipe Saving**: Logged-in users can save favorite recipes and access them from their dashboard.
+- **Save Favorite Recipes**: Users can mark recipes as favorites and access them from a dedicated section in the dashboard.
+- **Docker Support**: The application is containerized using Docker for easier deployment and scalability. Simply use the provided Dockerfile to build and run the app in a Docker environment.
 - **Email Notifications**: Users receive email notifications when new recipe suggestions are generated.
 - **Dark Mode**: Includes dark mode with gradient themes for a modern, user-friendly interface.
 
@@ -81,14 +82,27 @@ Check out the live demo [here](https://personalized-recipe-generator-app.vercel.
 
 ---
 
-#### 6. **Dark Mode - Dashboard**  
+
+#### 6. **Welcome Email**  
+![image](https://github.com/user-attachments/assets/d5c760c9-b40d-4203-8556-d36c180b66c7)
+*The welcome email received upon successful registration.*  
+
+---
+
+#### 7. **Recipe Generated Email**  
+![image](https://github.com/user-attachments/assets/ecd03fe7-2de0-49f7-808e-c847f452ae08)
+*An email with a newly generated personalized recipe.*
+
+---
+
+#### 8. **Dark Mode - Dashboard**  
 ![Dark Mode Dashboard](https://github.com/user-attachments/assets/b8c099ea-08d3-4712-8d84-902c4666e97f)  
 *The app's dashboard in dark mode, providing a sleek, modern experience.*  
 
 
 ---
 
-#### 7. **Dark Mode - Recipe Display**  
+#### 9. **Dark Mode - Recipe Display**  
 ![Dark Mode Recipe Display](https://github.com/user-attachments/assets/30a03909-ec40-447b-95bd-5343d2b58fa8)  
 *Recipe cards displayed in dark mode.*  
 

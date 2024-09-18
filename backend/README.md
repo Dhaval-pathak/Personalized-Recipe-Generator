@@ -10,7 +10,6 @@ Recipes are generated using OpenAI based on the user's dietary preferences and a
 - **AI-powered recipe generation** based on user preferences (dietary requirements and available ingredients)
 - **Recipe saving functionality**
 - **Email notifications** for recipe suggestions
-- **Dark mode support**
 
 ## Setup and Installation
 
@@ -87,7 +86,3 @@ You can also run the backend in a Docker container.
     ```
 
 5. **Access the backend** at `http://localhost:5000`.
-
----
-
-This should cover the recipe generation feature, Docker setup, environment variables, and how to configure them for your application!
