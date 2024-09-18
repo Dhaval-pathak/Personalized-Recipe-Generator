@@ -84,13 +84,13 @@ Check out the live demo [here](https://personalized-recipe-generator-app.vercel.
 
 
 #### 6. **Welcome Email**  
-![image](https://github.com/user-attachments/assets/d5c760c9-b40d-4203-8556-d36c180b66c7)
+![image](https://github.com/user-attachments/assets/ecd03fe7-2de0-49f7-808e-c847f452ae08)
 *The welcome email received upon successful registration.*  
 
 ---
 
 #### 7. **Recipe Generated Email**  
-![image](https://github.com/user-attachments/assets/ecd03fe7-2de0-49f7-808e-c847f452ae08)
+![image](https://github.com/user-attachments/assets/d5c760c9-b40d-4203-8556-d36c180b66c7)
 *An email with a newly generated personalized recipe.*
 
 ---
