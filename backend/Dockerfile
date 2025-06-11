@@ -10,6 +10,10 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 3000
+EXPOSE 5000
 
-CMD ["sh", "-c", "npx prisma generate &&  npx prisma migrate deploy  && npm start"]
+# Add healthcheck
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
+
+CMD ["sh", "-c", "npx prisma generate && npx prisma migrate deploy && npm start"]
